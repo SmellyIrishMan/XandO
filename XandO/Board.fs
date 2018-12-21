@@ -16,3 +16,10 @@ let positionIsTaken (board : State[,]) row col =
   | State.AVAILABLE -> false
   | State.PLAYER1 -> true
   | State.PLAYER2 -> true
+
+//let playerHasWon (board : State[,]) =
+  
+let rowIsWonByPlayer row (player : State) =
+  match player with
+  | State.AVAILABLE -> false
+  | _ -> List.forall ( fun state -> state = player ) row

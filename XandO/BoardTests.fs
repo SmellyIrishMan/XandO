@@ -51,3 +51,25 @@ let ``A position is taken``() =
   let board = Board.createEmptyBoard
   let board = Board.markPosition board 0 0 Board.PLAYER1
   Assert.IsTrue(Board.positionIsTaken board 0 0)
+
+
+[<Test>]
+let ``A row is won``() =
+  let board = Board.createEmptyBoard
+
+  let board = Board.markPosition board 1 0 Board.PLAYER1
+  let board = Board.markPosition board 1 1 Board.PLAYER2
+  let board = Board.markPosition board 1 2 Board.PLAYER1
+
+  let board = Board.markPosition board 2 0 Board.PLAYER2
+  let board = Board.markPosition board 2 1 Board.PLAYER2
+  let board = Board.markPosition board 2 2 Board.PLAYER2
+  
+  let row0List = board.[0, *] |> Array.toList
+  Assert.IsFalse(Board.rowIsWonByPlayer row0List Board.AVAILABLE)
+
+  let row1List = board.[1, *] |> Array.toList
+  Assert.IsFalse(Board.rowIsWonByPlayer row1List Board.PLAYER1)
+
+  let row2List = board.[2, *] |> Array.toList
+  Assert.IsTrue(Board.rowIsWonByPlayer row2List Board.PLAYER2)
