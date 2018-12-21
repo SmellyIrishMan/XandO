@@ -1,9 +1,9 @@
 ﻿module Board
 
-type State = Available | PLAYER1 | PLAYER2
+type State = AVAILABLE | PLAYER1 | PLAYER2
 
 let createEmptyBoard =
-  Array2D.create<State> 3 3 State.Available
+  Array2D.create<State> 3 3 State.AVAILABLE
 
 let markPosition (board : State[,]) row col (state : State) =
   Array2D.init<State> 3 3 (fun r c -> if (r, c) = (row, col) then state
@@ -13,6 +13,6 @@ let markPosition (board : State[,]) row col (state : State) =
 let positionIsTaken (board : State[,]) row col =
   let state = board.[row, col]
   match state with
-  | State.Available -> false
+  | State.AVAILABLE -> false
   | State.PLAYER1 -> true
   | State.PLAYER2 -> true

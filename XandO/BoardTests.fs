@@ -15,7 +15,7 @@ let ``Create an empty board``() =
   printfn "%A" board
   for row in 0 .. maxRow do
       for col in 0 .. maxCol do
-            Assert.AreEqual(board.[row, col], Board.State.Available)
+            Assert.AreEqual(board.[row, col], Board.State.AVAILABLE)
 
 [<Test>]
 let ``Get Row and Col of board``() =
@@ -33,12 +33,18 @@ let ``Mark positions on board``() =
   let board = Board.createEmptyBoard
   let board = Board.markPosition board 0 0 Board.PLAYER1
   let board = Board.markPosition board 1 0 Board.PLAYER2
-  let board = Board.markPosition board 2 0 Board.Available
+  let board = Board.markPosition board 2 0 Board.AVAILABLE
   let board = Board.markPosition board 1 1 Board.PLAYER1
   let board = Board.markPosition board 2 2 Board.PLAYER1
   
   printfn "%A" board
   Assert.IsTrue(board.[0, 0] = Board.PLAYER1)
+  Assert.IsTrue(board.[2, 0] = Board.AVAILABLE)
+  Assert.IsTrue(board.[2, 2] = Board.PLAYER1)
+  Assert.IsTrue(board.[1, 0] = Board.PLAYER2)
+
+  Assert.IsFalse(board.[0, 0] = Board.AVAILABLE)
+  Assert.IsFalse(board.[1, 0] = Board.PLAYER1)
 
 [<Test>]
 let ``A position is taken``() =
