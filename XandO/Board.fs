@@ -3,12 +3,12 @@
 type State = AVAILABLE | PLAYER1 | PLAYER2
 type XandOBoard = State[,]
 
-let createEmptyBoard =
+let createEmptyBoard () =
   Array2D.create<State> 3 3 State.AVAILABLE
 
-let markPosition (board :XandOBoard) row col (state : State) =
-  Array2D.init<State> 3 3 (fun r c -> if (r, c) = (row, col) then state
-                                      else board.[r, c])
+let createBoardFromList (list : State[]) =
+  let dimension = 3
+  Array2D.init<State> dimension dimension (fun row column -> list.[(row*dimension) + column])
 
 let positionIsTaken (board : XandOBoard) row col =
   let state = board.[row, col]
@@ -19,7 +19,7 @@ let positionIsTaken (board : XandOBoard) row col =
 
 //let playerHasWon (board : State[,]) =
   
-let rowIsWonByPlayer row (player : State) =
+let lineIsWonByPlayer line (player : State) =
   match player with
   | State.AVAILABLE -> false
-  | _ -> List.forall ( fun state -> state = player ) row
+  | _ -> List.forall ( fun state -> state = player ) line
