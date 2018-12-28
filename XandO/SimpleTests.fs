@@ -35,3 +35,10 @@ let ``2D Array``() =
   printfn "%A" twoDArray
   Assert.AreEqual(Array2D.length1 twoDArray, 3)
   Assert.AreEqual(Array2D.length2 twoDArray, 3)
+
+[<Test>]
+let ``2D Array Out Of Bounds``() =
+  let twoDArray = Array2D.create<int> 2 2 1
+
+  Assert.Throws<System.IndexOutOfRangeException>(fun() -> twoDArray.[1000, 1000] |> ignore)
+  |> ignore
