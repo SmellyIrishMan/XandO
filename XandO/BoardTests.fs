@@ -148,19 +148,59 @@ let ``GetLineStateCounts``() =
   let values = [Board.AVAILABLE; Board.AVAILABLE; Board.AVAILABLE; Board.PLAYER2; Board.PLAYER1;]
   let stateCounts = Board.getLineStateCounts values
   printfn "%A" stateCounts
+  Assert.AreEqual(stateCounts, [(Board.AVAILABLE, 3); (Board.PLAYER2, 1); (Board.PLAYER1, 1)])
 
   let values = [Board.PLAYER2; Board.PLAYER1;]
   let stateCounts = Board.getLineStateCounts values
   printfn "%A" stateCounts
+  Assert.AreEqual(stateCounts, [(Board.PLAYER2, 1); (Board.PLAYER1, 1)])
 
   let values = [Board.PLAYER1; Board.PLAYER2; Board.PLAYER1; Board.PLAYER1; Board.PLAYER1; Board.PLAYER1; Board.PLAYER1;]
   let stateCounts = Board.getLineStateCounts values
   printfn "%A" stateCounts
+  Assert.AreEqual(stateCounts, [(Board.PLAYER1, 1); (Board.PLAYER2, 1); (Board.PLAYER1, 5)])
 
   let values = [Board.PLAYER1; Board.PLAYER2; Board.PLAYER1; Board.PLAYER2; Board.PLAYER1; Board.PLAYER2; Board.PLAYER1;]
   let stateCounts = Board.getLineStateCounts values
   printfn "%A" stateCounts
+  Assert.AreEqual(stateCounts, [(Board.PLAYER1, 1); (Board.PLAYER2, 1); (Board.PLAYER1, 1); (Board.PLAYER2, 1); (Board.PLAYER1, 1); (Board.PLAYER2, 1); (Board.PLAYER1, 1)])
 
   let values = [Board.PLAYER1; Board.PLAYER1; Board.PLAYER1; Board.PLAYER1; Board.PLAYER1; Board.PLAYER1;]
   let stateCounts = Board.getLineStateCounts values
   printfn "%A" stateCounts
+  Assert.AreEqual(stateCounts, [(Board.PLAYER1, 6)])
+
+[<Test>]
+let ``Check if a player won a line``() =
+  let values = [Board.AVAILABLE; Board.AVAILABLE; Board.AVAILABLE; Board.PLAYER2; Board.PLAYER1;]
+  let winner = Board.checkIfPlayerWonLine values 3
+  Assert.IsFalse(fst(winner))
+
+  let values = [Board.PLAYER1; Board.PLAYER2; Board.PLAYER1; Board.PLAYER1; Board.PLAYER1; Board.PLAYER1; Board.PLAYER1;]
+  let winner = Board.checkIfPlayerWonLine values 3
+  Assert.IsTrue(fst(winner))
+  Assert.AreEqual(snd(winner), (Board.PLAYER1, 5))
+
+  let values = [Board.PLAYER1; Board.PLAYER2; Board.PLAYER1; Board.PLAYER2; Board.PLAYER1; Board.PLAYER2; Board.PLAYER1;]
+  let winner = Board.checkIfPlayerWonLine values 3
+  Assert.IsFalse(fst(winner))
+
+  let values = [Board.PLAYER1; Board.PLAYER1; Board.PLAYER1; Board.PLAYER1; Board.PLAYER1; Board.PLAYER1;]
+  let winner = Board.checkIfPlayerWonLine values 3
+  Assert.IsTrue(fst(winner))
+  Assert.AreEqual(snd(winner), (Board.PLAYER1, 6))
+
+
+[<Test>]
+let ``Check if a player won a board``() =
+  let values = [|Board.PLAYER2; Board.PLAYER2; Board.PLAYER1;
+                Board.PLAYER2; Board.PLAYER1; Board.AVAILABLE;
+                Board.PLAYER1; Board.PLAYER2; Board.PLAYER2|]
+
+  let board = Board.createBoardFromList values
+  printfn "Board"
+  printfn "%A\n" board
+  let winner = Board.IsGameOverAndWhoWon board
+
+  Assert.IsTrue(fst(winner))
+  Assert.AreEqual(snd(winner), (Board.PLAYER1, 3))

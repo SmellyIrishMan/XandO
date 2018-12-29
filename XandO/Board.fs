@@ -18,8 +18,6 @@ let positionIsTaken (board:XandOBoard) (position:Position) =
   | State.PLAYER1 -> true
   | State.PLAYER2 -> true
   | State.AVAILABLE -> false
-
-//let playerHasWon (board : State[,]) =
   
 let lineIsWonByPlayer line (player:State) =
   match player with
@@ -67,3 +65,84 @@ let rec getLineStateCounts line =
     let stateCount = leadingStateCount line line.Head
     let remainderOfList = snd(List.splitAt (snd(stateCount)) line)
     List.append [stateCount] (getLineStateCounts remainderOfList)
+
+let checkIfPlayerWonLine line minSequential =
+  let lineStateCounts = getLineStateCounts line
+  let winner = List.fold (
+                            fun currentBest nextStateCount ->
+                              let currentCount = snd(currentBest)
+                              let nextCount = snd(nextStateCount)
+                              let nextState = fst(nextStateCount)
+                              if not (nextState = State.AVAILABLE) && nextCount >= minSequential then
+                                if nextCount > currentCount then
+                                  nextStateCount
+                                else
+                                  currentBest
+                              else
+                                currentBest
+                            )
+                            (State.AVAILABLE, 0) lineStateCounts
+  if winner = (State.AVAILABLE, 0) then
+    (false, (State.AVAILABLE, 0))
+  else
+    (true, winner)
+
+let IsGameOverAndWhoWon (board : State[,]) =
+  let rows = Array2D.length1 board
+  let maxRowIndex = rows - 1
+  let columns = Array2D.length2 board
+  let maxColIndex = columns - 1
+  let minSequentialStates = 3
+
+  printfn "Checking rows"
+  let mutable won = false
+  let mutable winner = (false, (State.AVAILABLE, 0))
+  for i = 0 to maxRowIndex do
+    if not won then
+      let line = getLine board (i, 0) (0, 1)
+      printfn "\t%A" line
+      winner <- checkIfPlayerWonLine line minSequentialStates
+      won <- fst(winner)
+
+  printfn "Checking columns"
+  for i = 0 to maxColIndex do
+    if not won then
+      let line = getLine board (0, i) (1, 0)
+      printfn "\t%A" line
+      winner <- checkIfPlayerWonLine line minSequentialStates
+      won <- fst(winner)
+
+  printfn "Checking positive descending diagonal"
+  for i = 0 to maxRowIndex do
+    if not won then
+      let line = getLine board (i, 0) (1, 1)
+      printfn "\t%A" line
+      winner <- checkIfPlayerWonLine line minSequentialStates
+      won <- fst(winner)
+
+  for i = 1 to maxColIndex do
+    if not won then
+      let line = getLine board (0, i) (1, 1)
+      printfn "\t%A" line
+      winner <- checkIfPlayerWonLine line minSequentialStates
+      won <- fst(winner)
+
+  printfn "Checking negative ascending diagonal"
+  for i = 0 to maxRowIndex do
+    if not won then
+      let line = getLine board (i, 0) (-1, 1)
+      printfn "\t%A" line
+      winner <- checkIfPlayerWonLine line minSequentialStates
+      won <- fst(winner)
+
+  for i = 1 to maxColIndex do
+    if not won then
+      let line = getLine board (maxRowIndex, i) (-1, 1)
+      printfn "\t%A" line
+      winner <- checkIfPlayerWonLine line minSequentialStates
+      won <- fst(winner)
+
+  winner
+
+
+
