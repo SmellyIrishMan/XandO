@@ -204,3 +204,27 @@ let ``Check if a player won a board``() =
 
   Assert.IsTrue(fst(winner))
   Assert.AreEqual(snd(winner), (Board.PLAYER1, 3))
+
+  let values = [|Board.AVAILABLE; Board.AVAILABLE; Board.AVAILABLE;
+                Board.AVAILABLE; Board.AVAILABLE; Board.AVAILABLE;
+                Board.AVAILABLE; Board.AVAILABLE; Board.AVAILABLE|]
+
+  let board = Board.createBoardFromList values
+  printfn "Board"
+  printfn "%A\n" board
+  let winner = Board.IsGameOverAndWhoWon board
+
+  Assert.IsFalse(fst(winner))
+  Assert.AreEqual(snd(winner), (Board.AVAILABLE, 0))
+
+  let values = [|Board.PLAYER2; Board.PLAYER1; Board.PLAYER1;
+                Board.PLAYER1; Board.PLAYER2; Board.PLAYER1;
+                Board.PLAYER1; Board.PLAYER1; Board.PLAYER2|]
+
+  let board = Board.createBoardFromList values
+  printfn "Board"
+  printfn "%A\n" board
+  let winner = Board.IsGameOverAndWhoWon board
+
+  Assert.IsTrue(fst(winner))
+  Assert.AreEqual(snd(winner), (Board.PLAYER2, 3))
